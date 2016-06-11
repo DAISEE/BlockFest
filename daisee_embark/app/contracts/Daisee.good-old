@@ -1,0 +1,65 @@
+contract Daisee {
+
+    Usager[] public usagers;
+    uint public currentTime;
+    uint prixKwh;
+
+    /* Usagers */
+    struct Usager {
+        address addr;
+        uint[] conso;
+        uint[] prod;
+        uint[] disponible;
+
+        string nom;
+        uint credit;
+    }
+
+    Usager anusager;
+
+    /*  Initialisation */
+    function Daisee() {
+        currentTime = 0;
+    }
+
+
+    function () {
+        bool trouve=false;
+
+        for (uint i = 0; i < usagers.length; ++i) {
+            if(usagers[i].addr == msg.sender){
+                usagers[i].credit = usagers[i].credit + msg.value;
+                trouve=true;
+            }
+        }
+        if(trouve){
+
+        }else {
+            throw;
+        }
+
+    }
+
+    function sajouterUsager(string name) {
+        Usager nouvelUsager = anusager;
+        nouvelUsager.nom = name;
+        nouvelUsager.credit = msg.value;
+        nouvelUsager.addr = msg.sender;
+
+usagers.length++;
+                usagers[usagers.length] = nouvelUsager;
+
+                // {addr: msg.sender, credit: msg.value, nom: name, conso:[0], prod: [0], disponible:[0]}
+                for (uint i = 0; i < currentTime; ++i) {
+                    usagers[usagers.length].conso[i]=0;
+                    usagers[usagers.length].prod[i]=0;
+                    usagers[usagers.length].disponible[i]=0;
+                }
+    }
+
+
+    function nextTime() {
+        currentTime++;
+    }
+
+}
