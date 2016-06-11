@@ -9,6 +9,7 @@ contract Daisee {
         address addr;
         uint[] conso;
         uint[] prod;
+        uint[] disponible;
 
         string nom;
         uint credit;
@@ -39,13 +40,17 @@ contract Daisee {
         }else {
             throw;
         }
+
     }
 
-    function sajouterUsager(string name) {
+    function sajouterUsager(
+        string name
+        ) {
         Usager nouvelUsager = anusager;
         nouvelUsager.nom = name;
         nouvelUsager.credit = msg.value;
         nouvelUsager.addr = msg.sender;
+
 
         usagers[usagers.length++] = nouvelUsager;
 
@@ -53,6 +58,7 @@ contract Daisee {
         for (uint i = 0; i < currentTime; ++i) {
             usagers[usagers.length].conso[i]=0;
             usagers[usagers.length].prod[i]=0;
+            usagers[usagers.length].disponible[i]=0;
         }
         usagers[usagers.length].temps=currentTime-1;
         usagers[usagers.length].achatEDF=0;
@@ -87,40 +93,42 @@ contract Daisee {
         }
 
         if(desireeTot>dispoTot){ // Deficit
-            unit pourmille = 1000*dispoTot/desireeTot;
+            uint pourmille = 1000*dispoTot/desireeTot;
 
-            for (uint i = 0; i < usagers.length; ++i) {
-                if(usagers[i].temps == currentTime){
+            for (uint j = 0; j < usagers.length; ++j) {
+                if(usagers[j].temps == currentTime){
                     // Surplus prod personelle en temps de deficit
-                    if(usagers[i].conso[currentTime]<=usagers[i].prod[currentTime]){
-                        usagers[i].credit+=usagers[i].prod[currentTime]-usagers[i].conso[currentTime];
+                    if(usagers[j].conso[currentTime]<=usagers[j].prod[currentTime]){
                     }
                     // Deficit prod personelle en temps de deficit
                     else {
-                        usagers[i].credit+=(usagers[i].prod[currentTime]-usagers[i].conso[currentTime])*pourmille/1000;
-                        usagers[i].achatEDF-=(usagers[i].prod[currentTime]-usagers[i].conso[currentTime])*(1000-pourmille)/1000;
+                        usagers[j].credit+=(usagers[j].prod[currentTime]-usagers[j].conso[currentTime])*pourmille/1000;
+                        usagers[j].achatEDF-=(usagers[j].prod[currentTime]-usagers[j].conso[currentTime])*(1000-pourmille)/1000;
                     }
                 }
             }
         }
         else {
         // Surplus
-            unit pourmille = 1000*desireeTot/dispoTot;
+            uint pourmille2 = 1000*desireeTot/dispoTot;
 
-            for (uint i = 0; i < usagers.length; ++i) {
-                if(usagers[i].temps == currentTime){
+            for (uint k = 0; k < usagers.length; ++i) {
+                if(usagers[k].temps == currentTime){
                     // Deficit prod personelle en temps de surplus
-                    if(usagers[i].prod[currentTime]<=usagers[i].conso[currentTime]){
-                        usagers[i].credit+=usagers[i].prod[currentTime]-usagers[i].conso[currentTime];
+                    if(usagers[k].prod[currentTime]<=usagers[k].conso[currentTime]){
+                        usagers[k].credit+=usagers[k].prod[currentTime]-usagers[k].conso[currentTime];
                     }
                     // Surplus prod personelle en temps de surplus
                     else {
-                        usagers[i].credit+=(usagers[i].prod[currentTime]-usagers[i].conso[currentTime])*pourmille/1000;
-                        usagers[i].venteEDF+=(usagers[i].prod[currentTime]-usagers[i].conso[currentTime])*(1000-pourmille)/1000;
+                        usagers[k].credit+=(usagers[k].prod[currentTime]-usagers[k].conso[currentTime])*pourmille2/1000;
+                        usagers[k].venteEDF+=(usagers[k].prod[currentTime]-usagers[k].conso[currentTime])*(1000-pourmille2)/1000;
                     }
                 }
             }
+
         }
+
         currentTime++;
     }
+
 }
