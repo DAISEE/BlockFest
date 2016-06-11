@@ -5,6 +5,7 @@ var balance;
 function setStatus(message) {
   var status = document.getElementById("status");
   status.innerHTML = message;
+  
 };
 
 function refreshBalance() {
@@ -13,10 +14,12 @@ function refreshBalance() {
   meta.getBalance.call(account, {from: account}).then(function(value) {
     var balance_element = document.getElementById("balance");
     balance_element.innerHTML = value.valueOf();
+    refreshABalance();
   }).catch(function(e) {
     console.log(e);
     setStatus("Error getting balance; see log.");
   });
+  
 };
 
 function sendCoin() {
@@ -34,6 +37,7 @@ function sendCoin() {
     console.log(e);
     setStatus("Error sending coin; see log.");
   });
+  
 };
 
 window.onload = function() {
@@ -49,8 +53,30 @@ window.onload = function() {
     }
 
     accounts = accs;
-    account = accounts[0];
+    account = accounts[0];   
 
-    refreshBalance();
+    refreshBalance(); 
+    
   });
 }
+
+function refreshABalance() {
+  var meta = MetaCoin.deployed();
+  $("#sandbox").html("");
+  
+  var promises = [];
+  for(var i = 0; i<10; i++) {
+	  promises.push(meta.getBalance.call(accounts[i], {from: accounts[i]}));
+  }
+    
+  Promise.all(promises).then(function(values) {
+	// all calls succeeded
+	
+	balances=values.map(e => e.toString());
+	
+	for(var i = 0; i<10; i++) {
+		$("#sandbox").append("<div class='left_col'>"+accounts[i]+"</div><div class='right_col'>"+balances[i]+"</div><br />");
+	}
+
+  });
+};

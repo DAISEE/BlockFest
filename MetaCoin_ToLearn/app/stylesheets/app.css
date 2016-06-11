@@ -46,3 +46,16 @@ h3 {
 #balance {
   color: black;
 }
+
+#sandbox {
+   width:600px;
+   margin:0 auto;
+}
+.left_col {
+   float:left;
+   width:500px;
+}
+.right_col {
+   float:right;
+   width:100px;
+}
